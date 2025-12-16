@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Navbar from "./components/Navbar";
+import Products from "./components/Products";
+import Cart from "./components/Cart";
 
 function App() {
+  const [cart, setCart] = useState(
+    JSON.parse(localStorage.getItem("cart")) || []
+
+  );
+
+  const [showCart, setShowCart] = useState(false);
+
+  const addToCart = (product) => {
+    const updatedCart = [...cart, product];
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    alert("Added to cart successfully");
+  };
+
+  const removeFromCart = (index) => {
+    const updatedCart = cart.filter((_, i) => i !== index);
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar
+        cartCount={cart.length}
+
+        onCartClick={() => setShowCart(true)}
+        onHomeClick={() => setShowCart(false)}
+      />
+      {showCart ? (
+        <Cart
+          cart={cart}
+          removeFromCart={removeFromCart}
+        />
+      ) : (
+        <Products addToCart={addToCart} />
+      )}
+
+
+
+    </>
   );
 }
 
